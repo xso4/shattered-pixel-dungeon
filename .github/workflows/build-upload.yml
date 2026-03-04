@@ -1,0 +1,74 @@
+name: build-upload
+
+on:
+  workflow_dispatch:
+
+jobs:
+  desktop:
+    name: desktop-${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Make gradlew executable
+        if: runner.os == 'Linux'
+        run: chmod +x gradlew
+
+      - name: Build desktop jpackage image
+        run: ./gradlew desktop:jpackageImage
+        shell: bash
+        if: runner.os == 'Linux'
+
+      - name: Build desktop jpackage image (Windows)
+        run: .\gradlew.bat desktop:jpackageImage
+        shell: pwsh
+        if: runner.os == 'Windows'
+
+      - name: Upload desktop artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ runner.os }}-jpackage
+          path: desktop/build/jpackage/
+
+  android:
+    name: android-apk
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Build Android APK (debug)
+        run: ./gradlew android:assembleDebug
+
+      - name: Upload Android artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-debug-apk
+          path: android/build/outputs/apk/debug/*.apk

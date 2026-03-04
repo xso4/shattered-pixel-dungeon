@@ -34,6 +34,7 @@ import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import com.shatteredpixel.shatteredpixeldungeon.mod.ModInventory;
 
 public class Bag extends Item implements Iterable<Item> {
 
@@ -52,7 +53,7 @@ public class Bag extends Item implements Iterable<Item> {
 	public ArrayList<Item> items = new ArrayList<>();
 
 	public int capacity(){
-		return 20; // default container size
+	    return ModInventory.bagCapacityOverride(20);
 	}
 
 	//if an item is being quick-used from the bag, the bag should take on its targeting properties

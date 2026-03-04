@@ -161,6 +161,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import com.shatteredpixel.shatteredpixeldungeon.mod.ModHooks;
 
 public abstract class Char extends Actor {
 	
@@ -813,6 +814,9 @@ public abstract class Char extends Actor {
 		
 		if (!isAlive() || dmg < 0) {
 			return;
+		}
+		if (ModHooks.shouldBlockHeroDamage(this)) {
+		    return;
 		}
 
 		if(isInvulnerable(src.getClass())){

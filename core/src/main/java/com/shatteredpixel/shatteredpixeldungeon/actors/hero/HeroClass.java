@@ -81,6 +81,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingSt
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.DeviceCompat;
+import com.shatteredpixel.shatteredpixeldungeon.items.FateLock;
 
 public enum HeroClass {
 
@@ -115,6 +116,7 @@ public enum HeroClass {
 		waterskin.collect();
 
 		new ScrollOfIdentify().identify();
+		new FateLock().collect();
 
 		switch (this) {
 			case WARRIOR:

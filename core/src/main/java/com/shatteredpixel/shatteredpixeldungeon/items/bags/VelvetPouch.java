@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.quest.MetalShard;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.Runestone;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.mod.ModInventory;
 
 public class VelvetPouch extends Bag {
 
@@ -45,7 +46,7 @@ public class VelvetPouch extends Bag {
 	}
 
 	public int capacity(){
-		return 19;
+	    return ModInventory.bagCapacityOverride(19);
 	}
 	
 	@Override

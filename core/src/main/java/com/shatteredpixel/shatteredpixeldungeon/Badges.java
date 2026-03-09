@@ -1394,4 +1394,14 @@ public class Badges {
 
 		return null;
 	}
+	
+	public static void unlockAll() {
+	    loadGlobal();
+	    for (Badge badge : Badge.values()) {
+	        if (badge.type != BadgeType.HIDDEN) {
+	            global.add(badge);
+	        }
+	    }
+	    saveNeeded = true;
+	}
 }

@@ -40,6 +40,7 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import com.shatteredpixel.shatteredpixeldungeon.mod.ModInventory;
 
 public class TalentsPane extends ScrollPane {
 
@@ -81,12 +82,15 @@ public class TalentsPane extends ScrollPane {
 			} else if (tiersAvailable > 3 && Dungeon.hero.armorAbility == null){
 				tiersAvailable = 3;
 			}
+			if (ModInventory.isTalentTierUnlocked()) {
+			    tiersAvailable = Talent.MAX_TALENT_TIERS;
+			}
 		}
 
 		tiersAvailable = Math.min(tiersAvailable, talents.size());
 
 		for (int i = 0; i < Math.min(tiersAvailable, talents.size()); i++){
-			if (talents.get(i).isEmpty()) continue;
+			if (talents.get(i).isEmpty() && !ModInventory.isTalentTierUnlocked()) continue;
 
 			TalentTierPane pane = new TalentTierPane(talents.get(i), i+1, mode);
 			panes.add(pane);
@@ -278,7 +282,11 @@ public class TalentsPane extends ScrollPane {
 
 		@Override
 		protected void layout() {
-			super.layout();
+		if (buttons.isEmpty()) {
+		    height = title.bottom() - y;
+		    return;
+		}
+		super.layout();
 
 			int regStars = Talent.tierLevelThresholds[tier+1] - Talent.tierLevelThresholds[tier];
 

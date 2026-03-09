@@ -187,6 +187,8 @@ import com.watabou.utils.Random;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import com.shatteredpixel.shatteredpixeldungeon.mod.ModHooks;
+import com.shatteredpixel.shatteredpixeldungeon.mod.ModInventory;
 
 public class Hero extends Char {
 
@@ -266,6 +268,7 @@ public class Hero extends Char {
 			HP += Math.max(HT - curHT, 0);
 		}
 		HP = Math.min(HP, HT);
+		ModHooks.applyHpLock(this);
 	}
 
 	public int STR() {
@@ -385,28 +388,11 @@ public class Hero extends Char {
 	}
 
 	public int talentPointsAvailable(int tier){
-		if (lvl < (Talent.tierLevelThresholds[tier] - 1)
-			|| (tier == 3 && subClass == HeroSubClass.NONE)
-			|| (tier == 4 && armorAbility == null)) {
-			return 0;
-		} else if (lvl >= Talent.tierLevelThresholds[tier+1]){
-			return Talent.tierLevelThresholds[tier+1] - Talent.tierLevelThresholds[tier] - talentPointsSpent(tier) + bonusTalentPoints(tier);
-		} else {
-			return 1 + lvl - Talent.tierLevelThresholds[tier] - talentPointsSpent(tier) + bonusTalentPoints(tier);
-		}
+	    return ModHooks.talentPointsAvailable(this, tier);
 	}
 
 	public int bonusTalentPoints(int tier){
-		if (lvl < (Talent.tierLevelThresholds[tier]-1)
-				|| (tier == 3 && subClass == HeroSubClass.NONE)
-				|| (tier == 4 && armorAbility == null)) {
-			return 0;
-		} else if (buff(PotionOfDivineInspiration.DivineInspirationTracker.class) != null
-					&& buff(PotionOfDivineInspiration.DivineInspirationTracker.class).isBoosted(tier)) {
-			return 2;
-		} else {
-			return 0;
-		}
+	    return ModHooks.bonusTalentPoints(this, tier);
 	}
 	
 	public String className() {
@@ -500,6 +486,22 @@ public class Hero extends Char {
 		}
 		return result;
 	}
+
+public int baseAccuracy() {
+    return attackSkill;
+}
+
+public int baseEvasion() {
+    return defenseSkill;
+}
+
+public void adjustBaseAccuracy(int delta) {
+    attackSkill = Math.max(1, attackSkill + delta);
+}
+
+public void adjustBaseEvasion(int delta) {
+    defenseSkill = Math.max(1, defenseSkill + delta);
+}
 
 	@Override
 	public int attackSkill( Char target ) {
@@ -832,6 +834,7 @@ public class Hero extends Char {
 		
 		//calls to dungeon.observe will also update hero's local FOV.
 		fieldOfView = Dungeon.level.heroFOV;
+		ModHooks.applyHpLock(this);
 
 		if (buff(Endure.EndureTracker.class) != null){
 			buff(Endure.EndureTracker.class).endEnduring();
@@ -1965,6 +1968,9 @@ public class Hero extends Char {
 	}
 	
 	public void earnExp( int exp, Class source ) {
+	if (ModHooks.blockEarnExp(this)) {
+	    return;
+	}
 
 		//xp granted by ascension challenge is only for on-exp gain effects
 		if (source != AscensionChallenge.class) {
@@ -2010,7 +2016,10 @@ public class Hero extends Char {
 				}
 			}
 		}
-		
+		if (ModHooks.blockLevelUp(this)) {
+		    return;
+		}
+
 		boolean levelUp = false;
 		while (this.exp >= maxExp()) {
 			this.exp -= maxExp();

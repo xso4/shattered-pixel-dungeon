@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.mod.ModInventory;
 
 public class MagicalHolster extends Bag {
 
@@ -46,7 +47,7 @@ public class MagicalHolster extends Bag {
 	}
 
 	public int capacity(){
-		return 19;
+	    return ModInventory.bagCapacityOverride(19);
 	}
 	
 	@Override

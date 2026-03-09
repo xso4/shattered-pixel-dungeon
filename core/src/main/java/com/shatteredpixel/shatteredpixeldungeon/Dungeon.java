@@ -96,6 +96,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.TimeZone;
+import com.shatteredpixel.shatteredpixeldungeon.mod.ModInventory;
 
 public class Dungeon {
 
@@ -284,6 +285,7 @@ public class Dungeon {
 		Badges.reset();
 		
 		GamesInProgress.selectedClass.initHero( hero );
+		ModInventory.applyStartupGrants();
 	}
 
 	public static boolean isChallenged( int mask ) {

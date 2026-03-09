@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.spells.BeaconOfReturning;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.Spell;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.mod.ModInventory;
 
 public class ScrollHolder extends Bag {
 
@@ -47,7 +48,7 @@ public class ScrollHolder extends Bag {
 	}
 
 	public int capacity(){
-		return 19;
+	    return ModInventory.bagCapacityOverride(19);
 	}
 	
 	@Override

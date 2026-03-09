@@ -26,6 +26,7 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.FileUtils;
 
 import java.io.IOException;
+import com.shatteredpixel.shatteredpixeldungeon.Badges;
 
 public class Journal {
 	
@@ -78,6 +79,28 @@ public class Journal {
 			ShatteredPixelDungeon.reportException(e);
 		}
 		
+	}
+	
+	public static void unlockAll() {
+	    loadGlobal();
+	    for (Catalog cat : Catalog.values()) {
+	        for (Class<?> item : cat.items()) {
+	            Catalog.setSeen(item);
+	        }
+	    }
+	    for (Bestiary cat : Bestiary.values()) {
+	        for (Class<?> entity : cat.entities()) {
+	            Bestiary.setSeen(entity);
+	        }
+	    }
+	    for (Document doc : Document.values()) {
+	        for (String page : doc.pageNames()) {
+	            doc.readPage(page);
+	        }
+	    }
+	    Badges.unlockAll();
+	    Badges.saveGlobal(true);
+	    saveGlobal(true);
 	}
 
 }

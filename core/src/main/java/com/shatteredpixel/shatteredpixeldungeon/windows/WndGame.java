@@ -60,6 +60,17 @@ public class WndGame extends Window {
 			}
 		});
 		curBtn.icon(Icons.get(Icons.PREFS));
+		if (Dungeon.hero != null && Dungeon.hero.isAlive()) {
+		    addButton(curBtn = new RedButton(Messages.get(this, "mod_items")) {
+		        
+		        @Override
+protected void onClick() {
+    hide();
+    GameScene.show(new WndModInventory());
+}
+		    });
+		    curBtn.icon(Icons.get(Icons.PLUS));
+		}
 
 		// Challenges window
 		if (Dungeon.challenges > 0) {

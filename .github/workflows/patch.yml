@@ -1,0 +1,48 @@
+name: patch-upstream
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Download JavaParser (temp)
+        shell: bash
+        run: |
+          mkdir -p /tmp/javaparser
+          if ! curl -fL -o /tmp/javaparser/javaparser-core.jar https://repo1.maven.org/maven2/com/github/javaparser/javaparser-core/3.28.0/javaparser-core-3.28.0.jar; then
+            curl -fL -o /tmp/javaparser/javaparser-core.jar https://repo1.maven.org/maven2/com/github/javaparser/javaparser-core/3.27.1/javaparser-core-3.27.1.jar
+          fi
+
+      - name: Apply patch script (JavaParser)
+        shell: bash
+        run: |
+          mkdir -p .github/scripts/bin
+          javac -cp /tmp/javaparser/javaparser-core.jar -d .github/scripts/bin .github/scripts/apply-patch.java
+          java -cp .github/scripts/bin:/tmp/javaparser/javaparser-core.jar com.shatteredpixel.patch.ApplyPatch
+
+      - name: Commit and push changes
+        run: |
+          if git status --porcelain | grep .; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add core/
+            git commit -m "Apply patch"
+            git push
+          else
+            echo "No changes to commit."
+          fi
